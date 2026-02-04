@@ -1,15 +1,16 @@
 from flask import render_template, redirect, url_for
-from app import app
+from app import app, db
 from app.forms import NewWorldForm
+import sqlalchemy as sa
+from app.models import World
 
 @app.route('/')
 @app.route('/index')
 def index():
-    worlds = [
-        { 'name': 'Vrioska'},
-        { 'name': 'Avalon'},
-        { 'name': 'Equinox'}
-        ]
+    worlds = db.session.scalars(
+        sa.select(World).order_by(World.created.desc())
+    ).all()
+    print(worlds)
     return render_template('index.html', worlds=worlds)
 
 @app.route('/new-world', methods=['GET', 'POST'])

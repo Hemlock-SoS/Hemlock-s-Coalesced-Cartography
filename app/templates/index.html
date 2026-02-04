@@ -4,9 +4,10 @@
 <div class="world-container">
     {% for world in worlds %}
     <div class="world-card">
-        <img src="../static/images/default.png" alt="World Logo">
-    <h2>{{ world.name }}</h2>
-        </div>
+        <img src="{{ world.thumbnail_path }}" alt="{{ world.name }} Logo">
+        <h2>{{ world.name }}</h2>
+        <p></p>
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
