@@ -9,7 +9,7 @@ class World(db.Model):
     name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
     icon_path: so.Mapped[Optional[str]] = so.mapped_column(sa.String(255), index=True)
     created: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    maps: so.WriteOnlyMapped['Map'] = so.relationship(back_populates='body')
+    maps: so.WriteOnlyMapped['Map'] = so.relationship(back_populates='world')
 
     def __repr__(self):
         return f'{self.name}'
@@ -20,4 +20,4 @@ class Map(db.Model):
     body_path: so.Mapped[str] = so.mapped_column(sa.String(255))
     thumbnail_path: so.Mapped[str] = so.mapped_column(sa.String(255), default='./static/images/default.png')
     added: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    world: so.Mapped[World] = so.relationship(back_populates='name')
+    world: so.Mapped[World] = so.relationship(back_populates='maps')
