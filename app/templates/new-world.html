@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{%block content %}
+    <div class="modal" style="display: block; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+  <div style="background-color: #1f2937; margin: 10% auto; padding: 20px; width: 80%; max-width: 500px; border-radius: 5px;">
+    <button 
+      hx-on:click="document.getElementById('modal-container').innerHTML = ''"
+      style="float: right; font-size: 24px; border: none; background: none; cursor: pointer;">
+      &times;
+    </button>
+    
+    <h3>World Creation</h3>
+    
+    <form 
+      hx-post="{{ url_for('new_world') }}" 
+      hx-target="#modal-container"
+      hx-swap="innerHTML">
+      
+      {{ form.csrf_token }}
+      
+      <div>
+        {{ form.worldName.label }}
+        {{ form.worldName }}
+        {% if form.worldName.errors %}
+          <span style="color: red;">{{ form.field_name.errors[0] }}</span>
+        {% endif %}
+      </div>
+      
+      <!-- Add more fields -->
+      
+      <button type="submit">Submit</button>
+      <button 
+        type="button"
+        hx-on:click="document.getElementById('modal-container').innerHTML = ''">
+        Cancel
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

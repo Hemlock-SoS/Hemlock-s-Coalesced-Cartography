@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="world-container">
+    {% for world in worlds %}
+    <div class="world-card">
+        <img src="../static/images/yahoo.png" alt="World Logo">
+    <h2>{{ world.name }}</h2>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

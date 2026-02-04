@@ -1,0 +1,124 @@
+/* === GLOBAL === */
+@font-face {
+    font-family: 'Cathedral';
+    src: url(fonts/Cathedral.ttf)
+}
+
+body {
+    background-color: #0d1f2d;
+    color: #e5e7eb;
+    margin: 0;
+    font-family: Cathedral;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === HEADER === */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0; 
+    z-index: 50;
+    background-color: #0a1a24;
+    border-bottom: 2px solid #4a3d6a;
+    padding: 1rem;
+}
+
+.header-title {
+    font-size: 2.5rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    color: #b89fda;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+/* GRID  */
+.world-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 24px;
+    padding: 24px;
+}
+
+.world-card {
+    background-color: #0f2330;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.world-card:hover {
+    background-color: #132a3a;
+}
+
+.world-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1; 
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.world-card h2 {
+    color: #b89fda;
+    margin: 16px 0 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.world-card img {
+    border-radius: 6px;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+}
+
+/* === BUTTONS === */
+
+.btn-secondary {
+    background: rgba(74, 61, 106, 0.3);
+    color: #d1d5db;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #3d3350;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(74, 61, 106, 0.45);
+    transform: translateY(-1px);
+}
+
+/* === ZOOM CONTROLS === */
+
+.zoom-controls {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 40;
+}
+
+.zoom-indicator {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #8b7ba8;
+}
