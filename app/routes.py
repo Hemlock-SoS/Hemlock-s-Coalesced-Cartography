@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, flash, url_for, make_response
 from app import app, db
 from app.forms import NewWorldForm
 import sqlalchemy as sa
@@ -17,5 +17,11 @@ def index():
 def new_world():
     form = NewWorldForm()
     if form.validate_on_submit():
-        return redirect(url_for('index'))
+        world = World(name = form.worldName.data)
+        db.session.add(world)
+        db.session.commit()
+        flash('World created')
+        response = make_response('', 204)
+        response.headers['HX-Redirect'] = url_for('index')
+        return response
     return render_template('new-world.html', title = "Create world", form=form)
