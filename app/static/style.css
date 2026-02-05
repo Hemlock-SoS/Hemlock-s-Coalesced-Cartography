@@ -43,9 +43,10 @@ body {
 /* GRID  */
 .world-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 200px));
     gap: 24px;
     padding: 24px;
+    justify-content: start;
 }
 
 .world-card {
@@ -67,6 +68,7 @@ body {
     aspect-ratio: 1 / 1; 
     border-radius: 6px;
     object-fit: cover;
+    display: block;
 }
 
 .world-card h2 {
@@ -76,16 +78,15 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
 }
 
-.world-card img {
+/* .world-card img {
     border-radius: 6px;
     width: auto;
     height: auto;
     object-fit: cover;
-}
+} */
 
 /* === BUTTONS === */
 

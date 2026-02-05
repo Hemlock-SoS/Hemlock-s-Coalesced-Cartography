@@ -25,3 +25,12 @@ def new_world():
         response.headers['HX-Redirect'] = url_for('index')
         return response
     return render_template('new-world.html', title = "Create world", form=form)
+
+@app.route('/world/<id>')
+def display_world(id):
+    world = db.first_or_404(sa.select(World).where(World.id == id))
+    # response = make_response('', 204)
+    # response.headers['HX-Redirect'] = url_for('worlds/<id>')
+    # return response
+    print(world.thumbnail_path)
+    return render_template('world.html', world=world)

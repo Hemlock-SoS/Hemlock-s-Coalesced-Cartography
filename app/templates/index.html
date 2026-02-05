@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="world-container">
+<div class="world-container" hx-boost="true">
     {% for world in worlds %}
-    <div class="world-card">
+    <a href="{{ url_for('display_world', id=world.id)}}" class="world-card">
         <img src="{{ world.thumbnail_path }}" alt="{{ world.name }} Logo">
         <h2>{{ world.name }}</h2>
-        <p></p>
-    </div>
+    </a>
+
     {% endfor %}
 </div>
 {% endblock %}
