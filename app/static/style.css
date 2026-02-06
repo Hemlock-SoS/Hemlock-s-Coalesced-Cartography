@@ -54,7 +54,8 @@ body {
     padding: 16px;
     border-radius: 8px;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
+    justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -81,12 +82,18 @@ body {
     text-align: center;
 }
 
-/* .world-card img {
-    border-radius: 6px;
-    width: auto;
-    height: auto;
-    object-fit: cover;
-} */
+/* WORLD PAGE */
+.world-homepage {
+    padding: 24px;
+    justify-content: start;
+}
+
+.world-homepage img {
+    max-width: 320px;
+    max-height: 240px;
+    /* margin: auto; */
+    display: block;
+}
 
 /* === BUTTONS === */
 

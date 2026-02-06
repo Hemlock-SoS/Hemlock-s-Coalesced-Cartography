@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        <hr>
-        <img src="{{ world.thumbnail_path }}" alt="{{ world.name }} logo">
+    <div class = "world-homepage">
+        <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo">
         <h1>{{ world.name }}</h1>
+        {% if world.info %}
+            <h2>World info</h2>
+            <p>{{ world.info }}</p>
+        {% endif %}
     </div>
 {% endblock %} 
