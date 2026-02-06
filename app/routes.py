@@ -56,6 +56,6 @@ def display_world(id):
     world = db.first_or_404(sa.select(World).where(World.id == id))
     return render_template('world.html', world=world)
 
-@app.route('update-world/<id>')
+@app.route('/update-world/<id>')
 def update_world(id):
     pass
