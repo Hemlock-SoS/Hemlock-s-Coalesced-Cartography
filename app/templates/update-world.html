@@ -12,7 +12,7 @@
     <h3>Update World</h3>
     
     <form 
-      hx-post="{{ url_for('new_world') }}" 
+      hx-post="{{ url_for('update_world', id=id) }}" 
       hx-encoding="multipart/form-data"
       hx-on:htmx:after-request="if(event.detail.successful) window.history.back()">
       
