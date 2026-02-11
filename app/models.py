@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from flask import url_for
 from app import db
 
 class World(db.Model):

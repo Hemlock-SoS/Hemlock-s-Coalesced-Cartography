@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="world-homepage" style="display: flex; gap: 20px;">
-        <div style="flex: 1;">
-            <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo">
-            <nav class="nav-links">
+    <div class="world-homepage" style="display: flex; gap: 24px; height: calc(100vh - 100px); padding: 24px;">
+        <div>
+            <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo" style="max-width: 100%; height: auto; border-radius: 8px;">
+            <nav class="nav-links" style="display: flex; gap: 10px; margin-top: 10px;">
                 <a href="{{ url_for('update_world', id=world.id) }}" class="btn-secondary">Update World</a>
                 <a href="{{ url_for('upload_map', world_id=world.id) }}" class="btn-secondary">Upload Map</a>
             </nav>
-            <h1>{{ world.name }}</h1>
+            <h1 style="margin: 0;">{{ world.name }}</h1>
             {% if world.info %}
-                <h2>World info</h2>
-                <p>{{ world.info }}</p>
+                <div>
+                    <h2>World info</h2>
+                    <p>{{ world.info }}</p>
+                </div>
             {% endif %}
         </div>
         
         {% if world.primary_map %}
-        <div style="flex: 1;">
-            <h2>Primary Map</h2>
-            <img src="{{ url_for('static', filename=world.primary_map.body_path) }}" alt="Primary Map" style="max-width: 100%; height: auto;">
+        <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+            <h2 style="margin: 0 0 16px 0;">Primary Map</h2>
+            <div style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background-color: #1f2937; border-radius: 8px; overflow: hidden;">
+                <img src="{{ url_for('static', filename=world.primary_map.body_path) }}" alt="Primary Map" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
         </div>
         {% else %}
-        <div style="flex: 1;">
-            <p style="color: #9ca3af;">No primary map set. Upload a map to get started!</p>
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #1f2937; border-radius: 8px;">
+            <p style="color: #9ca3af; font-size: 18px;">No primary map set. Upload a map to get started!</p>
         </div>
         {% endif %}
     </div>
