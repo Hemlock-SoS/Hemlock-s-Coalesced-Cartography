@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileAllowed, FileField
-from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired, ValidationError, Length
+from wtforms import StringField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired, Length, ValidationError
+from flask_wtf.file import FileField, FileAllowed
 import sqlalchemy as sa
 from app import db
 from app.models import World
@@ -12,6 +12,9 @@ class NewWorldForm(FlaskForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
     ])
     worldInfo = TextAreaField('World info', validators=[Length(min=0, max=140)])
+    primaryMap = FileField('Primary Map (Optional)', validators=[
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+    ])
     submit = SubmitField('Create')
 
     def validate_worldName(self, worldName):
@@ -29,4 +32,15 @@ class UpdateWorldForm(FlaskForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
     ])
     worldInfo = TextAreaField('World info', validators=[Length(min=0, max=140)])
+    primaryMap = FileField('Primary Map', validators=[
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+    ])
     submit = SubmitField('Update')
+
+class UploadMapForm(FlaskForm):
+    mapName = StringField('Map name (Optional)', validators=[Length(min=0, max=64)])
+    mapFile = FileField('Map Image', validators=[
+        DataRequired(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
+    ])
+    submit = SubmitField('Upload Map')

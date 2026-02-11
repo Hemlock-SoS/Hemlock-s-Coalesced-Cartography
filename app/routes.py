@@ -1,11 +1,11 @@
-from flask import render_template, flash, url_for, make_response, request
+from flask import render_template, flash, redirect, url_for, request, make_response
 from app import app, db
-from app.forms import NewWorldForm, UpdateWorldForm
+from app.forms import NewWorldForm, UpdateWorldForm, UploadMapForm
+from app.models import World, Map
 import sqlalchemy as sa
-from app.models import World
-import os
 from werkzeug.utils import secure_filename
 from datetime import datetime, timezone
+import os
 
 @app.route('/')
 @app.route('/index')
@@ -13,7 +13,6 @@ def index():
     worlds = db.session.scalars(
         sa.select(World).order_by(World.created.desc())
     ).all()
-    print(worlds)
     return render_template('index.html', worlds=worlds)
 
 @app.route('/new-world', methods=['GET', 'POST'])
@@ -32,7 +31,7 @@ def new_world():
             
             upload_dir = os.path.join(app.root_path, 'static', 'user_data')
             os.makedirs(upload_dir, exist_ok=True)
-            
+
             file_path = os.path.join(upload_dir, unique_filename)
             file.save(file_path)
             
@@ -41,9 +40,34 @@ def new_world():
         world = World(
             name=form.worldName.data,
             thumbnail_path=thumbnail_path,
-            info=form.worldInfo.data
+            info=form.worldInfo.data if form.worldInfo.data else None
         )
         db.session.add(world)
+        db.session.flush()
+        
+        if form.primaryMap.data:
+            file = form.primaryMap.data
+            filename = secure_filename(file.filename)
+            
+            timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+            name, ext = os.path.splitext(filename)
+            unique_filename = f"{timestamp}_{name}{ext}"
+            
+            upload_dir = os.path.join(app.root_path, 'static', 'user_data')
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            file_path = os.path.join(upload_dir, unique_filename)
+            file.save(file_path)
+            
+            primary_map = Map(
+                world_id=world.id,
+                body_path=f'user_data/{unique_filename}'
+            )
+            db.session.add(primary_map)
+            db.session.flush()
+            
+            world.primary_map_id = primary_map.id
+        
         db.session.commit()
         flash('World created')
         response = make_response('', 204)
@@ -60,11 +84,18 @@ def display_world(id):
 def update_world(id):
     form = UpdateWorldForm()
     world = db.session.query(World).filter(World.id == id).first()
+    
+    if not world:
+        flash('World not found')
+        return redirect(url_for('index'))
+    
     if form.validate_on_submit():
         changes = False
+        
         if form.worldName.data and form.worldName.data != world.name:
             world.name = form.worldName.data
             changes = True
+        
         if form.thumbnail.data:
             file = form.thumbnail.data
             filename = secure_filename(file.filename)
@@ -83,24 +114,111 @@ def update_world(id):
             
             file_path = os.path.join(upload_dir, unique_filename)
             file.save(file_path)
-        
+            
             world.thumbnail_path = f'user_data/{unique_filename}'
             changes = True
-        if form.worldInfo.data and form.worldInfo.data != world.info:
+        
+        if form.worldInfo.data is not None and form.worldInfo.data != world.info:
             world.info = form.worldInfo.data
             changes = True
-
+        
+        if form.primaryMap.data:
+            file = form.primaryMap.data
+            filename = secure_filename(file.filename)
+            
+            timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+            name, ext = os.path.splitext(filename)
+            unique_filename = f"{timestamp}_{name}{ext}"
+            
+            upload_dir = os.path.join(app.root_path, 'static', 'user_data')
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            file_path = os.path.join(upload_dir, unique_filename)
+            file.save(file_path)
+            
+            if world.primary_map_id is not None:
+                old_primary_map = db.session.get(Map, world.primary_map_id)
+                if old_primary_map:
+                    old_map_file = os.path.join(app.root_path, 'static', old_primary_map.body_path)
+                    if os.path.exists(old_map_file):
+                        os.remove(old_map_file)
+                    db.session.delete(old_primary_map)
+            
+            new_primary_map = Map(
+                world_id=world.id,
+                body_path=f'user_data/{unique_filename}'
+            )
+            db.session.add(new_primary_map)
+            db.session.flush()
+            
+            world.primary_map_id = new_primary_map.id
+            changes = True
+        
         if changes:
             db.session.commit()
-            print(world.thumbnail_path)
-            flash('World updated')
+            flash('World updated successfully')
         else:
             flash('No changes made')
+        
         response = make_response('', 204)
         response.headers['HX-Redirect'] = url_for('display_world', id=id)
         return response
-    return render_template('update-world.html', title='Update world',id=id, form=form)
+    return render_template('update-world.html', title='Update world', form=form, id=id, world=world)
+
+@app.route('/world/<world_id>/upload-map', methods=['GET', 'POST'])
+def upload_map(world_id):
+    form = UploadMapForm()
+    world = db.first_or_404(sa.select(World).where(World.id == world_id))
+    
+    if form.validate_on_submit():
+        file = form.mapFile.data
+        filename = secure_filename(file.filename)
         
+        timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+        name, ext = os.path.splitext(filename)
+        unique_filename = f"{timestamp}_{name}{ext}"
+        
+        upload_dir = os.path.join(app.root_path, 'static', 'user_data')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        file_path = os.path.join(upload_dir, unique_filename)
+        file.save(file_path)
+        
+        new_map = Map(
+            world_id=world_id,
+            name=form.mapName.data if form.mapName.data else None,
+            body_path=f'user_data/{unique_filename}'
+        )
+        db.session.add(new_map)
+        db.session.flush()
+        
+        if world.primary_map_id is None:
+            world.primary_map_id = new_map.id
+        
+        db.session.commit()
+        flash('Map uploaded successfully')
+        response = make_response('', 204)
+        response.headers['HX-Redirect'] = url_for('display_world', id=world_id)
+        return response
+    
+    return render_template('upload-map.html', title='Upload Map', form=form, world_id=world_id)
 
+@app.route('/world/<world_id>/set-primary-map/<map_id>', methods=['POST'])
+def set_primary_map(world_id, map_id):
+    world = db.first_or_404(sa.select(World).where(World.id == world_id))
+    map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id, Map.world_id == world_id))
+    
+    world.primary_map_id = map_id
+    db.session.commit()
+    
+    flash('Primary map updated')
+    response = make_response('', 204)
+    response.headers['HX-Redirect'] = url_for('display_world', id=world_id)
+    return response
 
-
+@app.route('/map/<map_id>')
+def display_map(map_id):
+    map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id))
+    world = db.first_or_404(sa.select(World).where(World.id == map_obj.world_id))
+    
+    return render_template('map.html', map=map_obj, world=world)

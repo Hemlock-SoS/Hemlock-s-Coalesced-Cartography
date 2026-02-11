@@ -1,15 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class = "world-homepage">
-        <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo">
-        <nav class="nav-links">
-            <a href="{{ url_for('update_world', id=world.id) }}" class="btn-secondary">Update World</a>
-        </nav>
-        <h1>{{ world.name }}</h1>
-        {% if world.info %}
-            <h2>World info</h2>
-            <p>{{ world.info }}</p>
+    <div class="world-homepage" style="display: flex; gap: 20px;">
+        <div style="flex: 1;">
+            <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo">
+            <nav class="nav-links">
+                <a href="{{ url_for('update_world', id=world.id) }}" class="btn-secondary">Update World</a>
+                <a href="{{ url_for('upload_map', world_id=world.id) }}" class="btn-secondary">Upload Map</a>
+            </nav>
+            <h1>{{ world.name }}</h1>
+            {% if world.info %}
+                <h2>World info</h2>
+                <p>{{ world.info }}</p>
+            {% endif %}
+        </div>
+        
+        {% if world.primary_map %}
+        <div style="flex: 1;">
+            <h2>Primary Map</h2>
+            <img src="{{ url_for('static', filename=world.primary_map.body_path) }}" alt="Primary Map" style="max-width: 100%; height: auto;">
+        </div>
+        {% else %}
+        <div style="flex: 1;">
+            <p style="color: #9ca3af;">No primary map set. Upload a map to get started!</p>
+        </div>
         {% endif %}
     </div>
-{% endblock %} 
+{% endblock %}

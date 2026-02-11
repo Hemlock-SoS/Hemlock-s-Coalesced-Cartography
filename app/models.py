@@ -10,15 +10,46 @@ class World(db.Model):
     name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
     thumbnail_path: so.Mapped[str] = so.mapped_column(sa.String(255), default='images/default.png')
     created: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    maps: so.WriteOnlyMapped['Map'] = so.relationship(back_populates='world')
     info: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
+    primary_map_id: so.Mapped[Optional[int]] = so.mapped_column(
+        sa.ForeignKey('map.id', name='fk_world_primary_map'), 
+        nullable=True
+    )
+    
+    primary_map: so.Mapped[Optional['Map']] = so.relationship(
+        foreign_keys=[primary_map_id],
+        post_update=True
+    )
 
     def __repr__(self):
         return f'{self.name}:{self.info}'
+
     
 class Map(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    world_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(World.id), index=True)
+    world_id: so.Mapped[int] = so.mapped_column(
+        sa.ForeignKey('world.id', name='fk_map_world'), 
+        index=True
+    )
+    name: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
     body_path: so.Mapped[str] = so.mapped_column(sa.String(255))
     added: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
-    world: so.Mapped[World] = so.relationship(back_populates='maps')
+    
+    connected_maps: so.Mapped[list['Map']] = so.relationship(
+        'Map',
+        secondary='map_connections',
+        primaryjoin='Map.id==map_connections.c.map_id',
+        secondaryjoin='Map.id==map_connections.c.connected_map_id',
+        backref='connected_from'
+    )
+
+    def __repr__(self):
+        return f'Map {self.id} for world {self.world_id}'
+
+
+map_connections = sa.Table(
+    'map_connections',
+    db.Model.metadata,
+    sa.Column('map_id', sa.Integer, sa.ForeignKey('map.id'), primary_key=True),
+    sa.Column('connected_map_id', sa.Integer, sa.ForeignKey('map.id'), primary_key=True)
+)

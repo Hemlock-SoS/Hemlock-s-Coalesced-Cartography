@@ -35,6 +35,14 @@
       </div>
 
       <div style="margin-bottom: 15px;">
+        {{ form.primaryMap.label }}
+        {{ form.primaryMap(style="width: 100%; padding: 8px; margin-top: 5px; background-color: #374151; color: #fff; border: 1px solid #4b5563; border-radius: 4px;") }}
+        {% if form.primaryMap.errors %}
+          <span style="color: red;">{{ form.primaryMap.errors[0] }}</span>
+        {% endif %}
+      </div>
+
+      <div style="margin-bottom: 15px;">
         {{ form.worldInfo.label}}
         {{ form.worldInfo(style="width: 100%; padding: 8px; margin-top: 5px; background-color: #374151; color: #fff; border: 1px solid #4b5563; border-radius: 4px;") }}
         {% if form.thumbnail.errors %}
