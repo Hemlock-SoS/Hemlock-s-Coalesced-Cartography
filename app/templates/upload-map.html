@@ -12,7 +12,7 @@
     <h3>Upload Map</h3>
     
     <form 
-      hx-post="{{ url_for('upload_map', id=id) }}" 
+      hx-post="{{ url_for('upload_map', world_id=world_id) }}" 
       hx-encoding="multipart/form-data"
       hx-on:htmx:after-request="if(event.detail.successful) window.history.back()">
       
