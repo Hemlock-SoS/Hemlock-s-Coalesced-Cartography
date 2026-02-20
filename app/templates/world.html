@@ -9,12 +9,15 @@
                 <a href="{{ url_for('upload_map', world_id=world.id) }}" class="btn-secondary">Upload Map</a>
             </nav>
             <h1 style="margin: 0;">{{ world.name }}</h1>
+            <h2>World info</h2>
             {% if world.info %}
                 <div>
-                    <h2>World info</h2>
                     <p>{{ world.info }}</p>
                 </div>
             {% endif %}
+            <h2>Locations</h2>
+            {% if world.maps %}
+            {% end if %}
         </div>
         
         {% if world.primary_map %}
@@ -28,6 +31,9 @@
         <div style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #1f2937; border-radius: 8px;">
             <p style="color: #9ca3af; font-size: 18px;">No primary map set. Upload a map to get started!</p>
         </div>
+        {% endif %}
+
+        {% if world.maps %}
         {% endif %}
     </div>
 {% endblock %}

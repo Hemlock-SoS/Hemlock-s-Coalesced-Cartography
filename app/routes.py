@@ -78,6 +78,7 @@ def new_world():
 @app.route('/world/<id>')
 def display_world(id):
     world = db.first_or_404(sa.select(World).where(World.id == id))
+    print(world.maps)
     return render_template('world.html', world=world)
 
 @app.route('/update-world/<id>', methods=['GET', 'POST'])
@@ -185,11 +186,10 @@ def upload_map(world_id):
         file.save(file_path)
         
         new_map = Map(
-            world_id=world_id,
             name=form.mapName.data if form.mapName.data else None,
             body_path=f'user_data/{unique_filename}'
         )
-        db.session.add(new_map)
+        world.maps.append(new_map)
         db.session.flush()
         
         if world.primary_map_id is None:

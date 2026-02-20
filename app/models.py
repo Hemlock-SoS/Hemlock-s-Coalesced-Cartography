@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import List, Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db
@@ -17,7 +17,16 @@ class World(db.Model):
     
     primary_map: so.Mapped[Optional['Map']] = so.relationship(
         foreign_keys=[primary_map_id],
-        post_update=True
+        post_update=True,
+        overlaps='maps'  # Tell SQLAlchemy this is okay
+    )
+
+    maps: so.Mapped[list['Map']] = so.relationship(
+        'Map',
+        foreign_keys='[Map.world_id]',  # Note the brackets!
+        back_populates='world',
+        cascade='all, delete-orphan',
+        overlaps='primary_map'  # Tell SQLAlchemy this is okay
     )
 
     def __repr__(self):
@@ -34,6 +43,13 @@ class Map(db.Model):
     body_path: so.Mapped[str] = so.mapped_column(sa.String(255))
     added: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
     
+    # Relationships
+    world: so.Mapped['World'] = so.relationship(
+        'World',
+        foreign_keys=[world_id],
+        back_populates='maps'
+    )
+    
     connected_maps: so.Mapped[list['Map']] = so.relationship(
         'Map',
         secondary='map_connections',
@@ -41,9 +57,6 @@ class Map(db.Model):
         secondaryjoin='Map.id==map_connections.c.connected_map_id',
         backref='connected_from'
     )
-
-    def __repr__(self):
-        return f'Map {self.id} for world {self.world_id}'
 
 
 map_connections = sa.Table(
