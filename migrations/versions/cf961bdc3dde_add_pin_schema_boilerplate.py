@@ -1,8 +1,8 @@
-"""Recreate migrations
+"""Add pin schema boilerplate
 
-Revision ID: f2dc0b067c1e
+Revision ID: cf961bdc3dde
 Revises: 
-Create Date: 2026-02-10 16:37:39.391431
+Create Date: 2026-02-20 10:35:20.072119
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f2dc0b067c1e'
+revision = 'cf961bdc3dde'
 down_revision = None
 branch_labels = None
 depends_on = None
