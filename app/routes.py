@@ -78,7 +78,6 @@ def new_world():
 @app.route('/world/<id>')
 def display_world(id):
     world = db.first_or_404(sa.select(World).where(World.id == id))
-    print(world.maps)
     return render_template('world.html', world=world)
 
 @app.route('/update-world/<id>', methods=['GET', 'POST'])
@@ -216,9 +215,13 @@ def set_primary_map(world_id, map_id):
     response.headers['HX-Redirect'] = url_for('display_world', id=world_id)
     return response
 
+@app.route('/world/<world_id>/<map_id>/rename', methods=['POST'])
+def rename_map(map_id):
+    pass
+
 @app.route('/map/<map_id>')
-def display_map(map_id):
+def get_map(map_id):
     map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id))
-    world = db.first_or_404(sa.select(World).where(World.id == map_obj.world_id))
-    
-    return render_template('map.html', map=map_obj, world=world)
+    return f'''<img src="{url_for('static', filename=map_obj.body_path)}" 
+                    alt="{map_obj.name or 'Map'}" 
+                    style="max-width: 100%; max-height: 100%; object-fit: contain;">'''

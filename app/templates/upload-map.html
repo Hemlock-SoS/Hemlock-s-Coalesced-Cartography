@@ -17,6 +17,13 @@
       hx-on:htmx:after-request="if(event.detail.successful) window.history.back()">
       
       {{ form.csrf_token }}
+      <div style="margin-bottom: 15px;">
+        {{ form.mapName.label }}
+        {{ form.mapName(style="width: 100%; padding: 8px; margin-top: 5px; background-color: #374151; color: #fff; border: 1px solid #4b5563; border-radius: 4px;") }}
+        {% if form.mapFile.errors %}
+          <span style="color: red;">{{ form.mapFile.errors[0] }}</span>
+        {% endif %}
+      </div>
       
       <div style="margin-bottom: 15px;">
         {{ form.mapFile.label }}

@@ -17,23 +17,40 @@
             {% endif %}
             <h2>Locations</h2>
             {% if world.maps %}
-            {% end if %}
+                {% for map in world.maps %}
+                <div style="display: flex; align-items: center; gap: 8px; padding: 8px; margin-bottom: 4px; background: rgba(74, 61, 106, 0.15); border: 1px solid #3d3350; border-radius: 4px;">
+                    <a href="#" 
+                        hx-get="{{ url_for('get_map', map_id=map.id) }}"
+                        hx-target=".map-background"
+                        hx-swap="innerHTML"
+                        style="flex: 1; color: #d1d5db; text-decoration: none; font-size: 0.85rem;"
+                        onmouseover="this.style.color='#b89fda'"
+                        onmouseout="this.style.color='#d1d5db'">
+                        {{ map.name or 'Unnamed Map'}}
+                    </a>
+                </div>
+                {% endfor %}
+            {% endif %}
         </div>
         
         {% if world.primary_map %}
-        <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
-            <h2 style="margin: 0 0 16px 0;">Primary Map</h2>
-            <div style="flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background-color: #1f2937; border-radius: 8px; overflow: hidden;">
-                <img src="{{ url_for('static', filename=world.primary_map.body_path) }}" alt="Primary Map" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <div class="map-container">
+                <h2 style="margin: 0 0 16px 0;">Map</h2>
+                <div class="map-background" 
+                    style="min-height: 500px; display: flex; align-items: center; justify-content: center; background-color: #0f2330; border-radius: 8px; overflow: hidden; position: relative;">
+                        <img src="{{ url_for('static', filename=world.primary_map.body_path) }}" 
+                                alt="Map" 
+                                style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </div>
         </div>
         {% else %}
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #1f2937; border-radius: 8px;">
-            <p style="color: #9ca3af; font-size: 18px;">No primary map set. Upload a map to get started!</p>
+        <div class="map-container">
+            <h2 style="margin: 0 0 16px 0;">Map</h2>
+            <div class="map-background"
+                style="min-height: 500px; display: flex; align-items: center; justify-content: center; background-color: #0f2330; border-radius: 8px;">
+            <p style="color: #8b7ba8; font-size: 18px;">No primary map set. Upload a map to get started!</p>
+            </div>
         </div>
         {% endif %}
-
-        {% if world.maps %}
-        {% endif %}
-    </div>
+        </div>
 {% endblock %}
