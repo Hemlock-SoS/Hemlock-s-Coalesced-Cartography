@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, ValidationError
 from flask_wtf.file import FileField, FileAllowed
 import sqlalchemy as sa
@@ -43,4 +43,5 @@ class UploadMapForm(FlaskForm):
         DataRequired(),
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Images only!')
     ])
+    set_as_primary = BooleanField('Primary?')
     submit = SubmitField('Upload Map')

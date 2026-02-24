@@ -15,18 +15,19 @@ class World(db.Model):
         nullable=True
     )
     
+    # Relationships
     primary_map: so.Mapped[Optional['Map']] = so.relationship(
         foreign_keys=[primary_map_id],
         post_update=True,
-        overlaps='maps'  # Tell SQLAlchemy this is okay
+        overlaps='maps'
     )
 
     maps: so.Mapped[list['Map']] = so.relationship(
         'Map',
-        foreign_keys='[Map.world_id]',  # Note the brackets!
+        foreign_keys='[Map.world_id]',
         back_populates='world',
         cascade='all, delete-orphan',
-        overlaps='primary_map'  # Tell SQLAlchemy this is okay
+        overlaps='primary_map'
     )
 
     def __repr__(self):

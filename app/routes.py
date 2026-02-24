@@ -193,6 +193,8 @@ def upload_map(world_id):
         
         if world.primary_map_id is None:
             world.primary_map_id = new_map.id
+        elif form.set_as_primary.data:
+            world.primary_map_id = new_map.id
         
         db.session.commit()
         flash('Map uploaded successfully')
