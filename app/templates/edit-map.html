@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 24px;">
+    <h1 style="color: #b89fda; margin-bottom: 24px;">Edit Map</h1>
+    
+    <form method="POST" 
+          style="background: rgba(74, 61, 106, 0.2); border: 1px solid #3d3350; border-radius: 8px; padding: 24px;">
+        {{ form.hidden_tag() }}
+        
+        <div style="margin-bottom: 20px;">
+            {{ form.name.label(style="display: block; margin-bottom: 8px; color: #b89fda; font-weight: 600;") }}
+            {{ form.name(placeholder="e.g., Tavern Interior, Town Square", 
+                         style="width: 100%; padding: 10px; background: #0d1f2d; border: 1px solid #3d3350; border-radius: 4px; color: #e5e7eb; font-family: Cathedral; font-size: 1rem;") }}
+            {% if form.name.errors %}
+                <span style="color: #ef4444; font-size: 0.85rem;">{{ form.name.errors[0] }}</span>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            {{ form.set_as_primary(style="width: 18px; height: 18px; cursor: pointer; accent-color: #b89fda;") }}
+            {{ form.set_as_primary.label(style="color: #b89fda; font-weight: 600; cursor: pointer; margin: 0;") }}
+            {% if world.primary_map_id and world.primary_map_id != map.id %}
+            <span style="color: #8b7ba8; font-size: 0.85rem;">(Current: {{ world.primary_map.name or 'Unnamed Map' }})</span>
+            {% endif %}
+        </div>
+        
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <a href="{{ url_for('display_world', id=world.id) }}" 
+               class="btn-secondary"
+               style="text-decoration: none; display: inline-block;">
+                Cancel
+            </a>
+            {{ form.submit(class="btn-secondary", 
+                          style="background: rgba(184, 159, 218, 0.3); border-color: #b89fda; cursor: pointer;") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

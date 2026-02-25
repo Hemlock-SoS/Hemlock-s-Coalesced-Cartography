@@ -7,7 +7,17 @@
         <img src="{{ url_for('static', filename=world.thumbnail_path) }}" alt="{{ world.name }} Logo">
         <h2>{{ world.name }}</h2>
     </a>
-
+    <form method="POST" 
+        action="{{ url_for('delete_world', world_id=world.id) }}"
+        style="margin: 0; display: inline; flex-shrink: 0;"
+        onsubmit="return confirm('Delete {{ world.name }}? This will also delete all maps associated.')">
+        <button type="submit"
+            class="btn-secondary"
+            style="padding: 4px 8px; font-size: 0.75rem; line-height: 1; background: rgba(166, 83, 72, 0.2); border-color: #8A3F35;"
+            title="Delete world">
+                🗑️
+        </button>
+    </form>
     {% endfor %}
 </div>
 {% endblock %}

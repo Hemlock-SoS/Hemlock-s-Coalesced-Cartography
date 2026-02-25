@@ -165,6 +165,17 @@ def update_world(id):
         return response
     return render_template('update-world.html', title='Update world', form=form, id=id, world=world)
 
+@app.route('/world/<world_id>/delete', methods=['POST'])
+def delete_world(world_id):
+    world = db.first_or_404(sa.select(World).where(World.id == world_id))
+    db.session.delete(world)
+    db.session.commit()
+
+    flash('{{world.name}} successfully deleted')
+    return index()
+
+
+
 @app.route('/world/<world_id>/upload-map', methods=['GET', 'POST'])
 def upload_map(world_id):
     form = UploadMapForm()
@@ -204,22 +215,33 @@ def upload_map(world_id):
     
     return render_template('upload-map.html', title='Upload Map', form=form, world_id=world_id)
 
-@app.route('/world/<world_id>/set-primary-map/<map_id>', methods=['POST'])
-def set_primary_map(world_id, map_id):
-    world = db.first_or_404(sa.select(World).where(World.id == world_id))
-    map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id, Map.world_id == world_id))
+@app.route('/map/<int:map_id>/edit', methods=['GET', 'POST'])
+def edit_map(map_id):
+    """Edit map name and primary status"""
+    from app.forms import EditMapForm 
     
-    world.primary_map_id = map_id
-    db.session.commit()
+    map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id))
+    world = db.first_or_404(sa.select(World).where(World.id == map_obj.world_id))
     
-    flash('Primary map updated')
-    response = make_response('', 204)
-    response.headers['HX-Redirect'] = url_for('display_world', id=world_id)
-    return response
-
-@app.route('/world/<world_id>/<map_id>/rename', methods=['POST'])
-def rename_map(map_id):
-    pass
+    form = EditMapForm()
+    
+    if form.validate_on_submit():
+        map_obj.name = form.name.data.strip() if form.name.data else None
+        
+        if form.set_as_primary.data:
+            world.primary_map_id = map_id
+        
+        db.session.commit()
+        flash('Map updated successfully')
+        response = make_response('', 204)
+        response.headers['HX-Redirect'] = url_for('display_world', id=world.id)
+        return response
+    
+    if request.method == 'GET':
+        form.name.data = map_obj.name
+        form.set_as_primary.data = (world.primary_map_id == map_id)
+    
+    return render_template('edit-map.html', form=form, map=map_obj, world=world)
 
 @app.route('/map/<map_id>')
 def get_map(map_id):
@@ -227,3 +249,23 @@ def get_map(map_id):
     return f'''<img src="{url_for('static', filename=map_obj.body_path)}" 
                     alt="{map_obj.name or 'Map'}" 
                     style="max-width: 100%; max-height: 100%; object-fit: contain;">'''
+
+@app.route('/map/<int:map_id>/delete', methods=['POST'])
+def delete_map(map_id):
+    map_obj = db.first_or_404(sa.select(Map).where(Map.id == map_id))
+    world = db.first_or_404(sa.select(World).where(World.id == map_obj.world_id))
+    
+    if world.primary_map_id == map_id:
+        world.primary_map_id = None
+    
+    map_file_path = os.path.join(app.root_path, 'static', map_obj.body_path)
+    if os.path.exists(map_file_path):
+        os.remove(map_file_path)
+    
+    db.session.delete(map_obj)
+    db.session.commit()
+    
+    flash('Map deleted successfully')
+    response = make_response('', 204)
+    response.headers['HX-Redirect'] = url_for('display_world', id=world.id)
+    return response

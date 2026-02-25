@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, ValidationError, Optional
 from flask_wtf.file import FileField, FileAllowed
 import sqlalchemy as sa
 from app import db
@@ -45,3 +45,8 @@ class UploadMapForm(FlaskForm):
     ])
     set_as_primary = BooleanField('Primary?')
     submit = SubmitField('Upload Map')
+
+class EditMapForm(FlaskForm):
+    name = StringField('Map Name', validators=[Optional(), Length(max=64)])
+    set_as_primary = BooleanField('Set as primary map')
+    submit = SubmitField('Save Changes')

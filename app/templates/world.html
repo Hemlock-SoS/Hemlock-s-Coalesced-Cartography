@@ -28,6 +28,23 @@
                         onmouseout="this.style.color='#d1d5db'">
                         {{ map.name or 'Unnamed Map'}}
                     </a>
+                    <a href="{{ url_for('edit_map', map_id=map.id) }}" 
+                        class="btn-secondary"
+                        style="padding: 4px 8px; font-size: 0.75rem; text-decoration: none; line-height: 1; flex-shrink: 0;"
+                        title="Edit map">
+                            ✏️
+                    </a>
+                    <form method="POST" 
+                        action="{{ url_for('delete_map', map_id=map.id) }}"
+                        style="margin: 0; display: inline; flex-shrink: 0;"
+                        onsubmit="return confirm('Delete {{ map.name }}? This will also delete all pins on this map.')">
+                    <button type="submit"
+                        class="btn-secondary"
+                        style="padding: 4px 8px; font-size: 0.75rem; line-height: 1; background: rgba(166, 83, 72, 0.2); border-color: #8A3F35;"
+                        title="Delete map">
+                            🗑️
+                    </button>
+                    </form>
                 </div>
                 {% endfor %}
             {% endif %}
